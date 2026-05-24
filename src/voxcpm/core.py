@@ -250,9 +250,9 @@ class VoxCPM:
         """Generate long-form speech as short anchored segments.
 
         The first generated segment becomes a stable reference voice for
-        VoxCPM2 when no external reference is supplied. Later segments use the
-        previous segment as the continuation prompt so long inputs do not rely
-        on one very long autoregressive pass.
+        VoxCPM2 when no external reference is supplied. Later segments use that
+        same seed segment as both reference and continuation prompt so long
+        inputs do not rely on one very long autoregressive pass.
         """
         segments = _split_long_text_for_tts(text, max_chars=max_chars)
         control = (control or "").strip()
@@ -313,7 +313,9 @@ class VoxCPM:
                 stable_reference_path = write_segment("seed_reference.wav", first_wav)
 
             seed_prompt_path = write_segment("segment_001.wav", first_wav)
-            seed_prompt_text = first_text
+            # prompt_text must match the spoken prompt audio. Voice-design control
+            # text guides generation but is not part of the spoken transcript.
+            seed_prompt_text = segments[0]
 
             for index, segment in enumerate(segments[1:], start=2):
                 wav = _as_mono_float32(
