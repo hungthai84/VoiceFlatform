@@ -261,6 +261,7 @@ def _run_single(args, parser, *, text: str, output: str, prompt_text: str | None
         normalize=args.normalize,
         denoise=args.denoise
         and (args.prompt_audio is not None or args.reference_audio is not None),
+        seed=args.seed,
     )
 
     import soundfile as sf
@@ -348,6 +349,7 @@ def cmd_batch(args, parser):
                 normalize=args.normalize,
                 denoise=args.denoise
                 and (prompt_audio_path is not None or reference_audio_path is not None),
+                seed=args.seed,
             )
 
             output_file = output_dir / f"output_{i:03d}.wav"
@@ -389,6 +391,12 @@ def _add_common_generation_args(parser):
     )
     parser.add_argument(
         "--normalize", action="store_true", help="Enable text normalization"
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="Random seed for generation (default: None)",
     )
 
 
@@ -547,6 +555,12 @@ Examples:
     )
     batch_parser.add_argument(
         "--normalize", action="store_true", help="Enable text normalization"
+    )
+    batch_parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="Random seed for generation (default: None)",
     )
     _add_model_args(batch_parser)
     _add_lora_args(batch_parser)
