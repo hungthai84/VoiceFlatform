@@ -1,5 +1,4 @@
 launch.json
-.venv/
 __pycache__
 voxcpm.egg-info
 .DS_Store
